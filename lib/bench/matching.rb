@@ -95,6 +95,10 @@ module Bench
       end
     end
 
+    def matching_is_running?
+      matching_queue_status[:consumers].positive?
+    end
+
     def save_report
       report_name = "#{self.class.name.humanize.demodulize}_#{@config[:orders][:injector]}_\
                      #{@config[:orders][:number]}_#{Time.now.iso8601}.yml"
