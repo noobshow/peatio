@@ -78,6 +78,14 @@ module Bench
     # E.g there is rabbitmqctl list_queues.
     # TODO: Write useful queue info stats into file.
     def wait_for_matching
+      logger = File.open('log/bench-matching.log', 'w')
+      thread = Thread.new do
+        loop do
+          logger.puts matching_queue_status.to_json
+          sleep 5
+        end
+      end
+
       loop do
         queue_status = matching_queue_status
         break if queue_status[:messages].zero? &&
@@ -85,6 +93,9 @@ module Bench
                  Time.parse("#{queue_status[:idle_since]} UTC") >= @publish_started_at
         sleep 0.5
       end
+
+      thread.exit
+      logger.close
     end
 
     # TODO: Add more useful metrics to result.
